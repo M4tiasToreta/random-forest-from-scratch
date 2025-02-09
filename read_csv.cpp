@@ -4,12 +4,12 @@
 #include <time.h>
 
 #define MAX_ROWS 1000
-#define MAX_COLS 32
+#define MAX_COLS 31
 #define TRAIN_SPLIT 0.8
 
 // Estrutura para armazenar os dados
 typedef struct {
-    double features[MAX_COLS - 1];
+    float features[MAX_COLS - 1];
     int label;
 } DataPoint;
 
@@ -26,11 +26,12 @@ int read_csv(const char *filename, DataPoint data[], int *num_samples, int num_f
     while (fgets(line, sizeof(line), file) && row < MAX_ROWS) {
         char *token = strtok(line, ",");
         int col = 0;
-        
+
         while (token && col < num_features) {
-            if (col < num_features - 1) {
+            if (col != 0) {
                 data[row].features[col] = atof(token);
             } else {
+                printf("%d", atoi(token));
                 data[row].label = atoi(token);
             }
             token = strtok(NULL, ",");
@@ -65,10 +66,14 @@ int main() {
     DataPoint train[MAX_ROWS], test[MAX_ROWS];
     int num_samples, train_size, test_size;
 
-    if (read_csv("data.csv", data, &num_samples, 32)) {
+    if (read_csv("data.csv", data, &num_samples, 31)) {
         return 1;
     }
-    
+
+    for (int a; a<MAX_COLS; a++){
+        printf("floats da primeira linha: %f\n", data[1].features[a]);
+    }
+    printf("label: %d\n", data[1].label);
     printf("Total de amostras: %d\n", num_samples);
     
     split_data(data, num_samples, train, test, &train_size, &test_size);
