@@ -4,7 +4,7 @@
 #include <time.h>
 
 #define MAX_ROWS 1000
-#define MAX_COLS 10
+#define MAX_COLS 32
 #define TRAIN_SPLIT 0.8
 
 // Estrutura para armazenar os dados
@@ -65,7 +65,7 @@ int main() {
     DataPoint train[MAX_ROWS], test[MAX_ROWS];
     int num_samples, train_size, test_size;
 
-    if (read_csv("data.csv", data, &num_samples, 5)) {
+    if (read_csv("data.csv", data, &num_samples, 32)) {
         return 1;
     }
     
