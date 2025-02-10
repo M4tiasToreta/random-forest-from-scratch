@@ -6,6 +6,7 @@
 
 int main()
 {
+    srand(time(NULL));
     DataPoint data[MAX_ROWS];
     DataPoint train[MAX_ROWS], test[MAX_ROWS];
     int num_samples, train_size, test_size;
@@ -17,7 +18,7 @@ int main()
 
     printf("Total de amostras: %d\n", num_samples);
 
-    split_data(data, num_samples, train, test, &train_size, &test_size);
+    split_data(data, num_samples, train, test, &train_size, &test_size); // aqui tem que mudar para colocar aleatório nos samples de train and test
 
     printf("Amostras de treino: %d, Amostras de teste: %d\n", train_size, test_size);
 

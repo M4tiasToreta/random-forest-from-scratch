@@ -75,7 +75,7 @@ void find_best_split(DataPoint *samples, int n_samples, int n_features,
     *best_feature = -1;
     *best_threshold = 0.0;
 
-    int feature = random_int(0, n_features); // CHANGE HERE FOR A MORE INTELLIGENT SPLIT
+    int feature = random_int(0, n_features);
 
     double min_val = samples[0].features[feature];
     double max_val = samples[0].features[feature];
@@ -87,7 +87,7 @@ void find_best_split(DataPoint *samples, int n_samples, int n_features,
             max_val = samples[i].features[feature];
     }
 
-    int num_thresholds = 10; // ?? MAKE SURE THIS MAKES SENSE
+    int num_thresholds = 10;
     for (int i = 0; i < num_thresholds; i++)
     {
         double threshold = min_val + i * (max_val - min_val) / (num_thresholds - 1);
@@ -193,7 +193,7 @@ RandomForest *train_model(DataPoint train[], int n_samples, int n_features, int 
         DataPoint *bootstrap = (DataPoint *)malloc(n_samples * sizeof(DataPoint));
         for (int j = 0; j < n_samples; j++)
         {
-            int index = random_int(0, n_samples - 1); // valores podem se repetir aqui. Talvez um tunning para não se repetirem?
+            int index = random_int(0, n_samples - 1);
             bootstrap[j] = train[index];
         }
         random_forest->nodes[i] = build_tree(bootstrap, 0, max_depth, n_samples, n_features, min_registers_per_split);
