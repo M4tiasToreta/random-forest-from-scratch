@@ -2,15 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include "read_csv.h"
-// #include "train.h"
+#include "train.h"
 
 
 int main() {
     DataPoint data[MAX_ROWS];
     DataPoint train[MAX_ROWS], test[MAX_ROWS];
     int num_samples, train_size, test_size;
-    int prediction[114];
 
     if (read_csv("data.csv", data, &num_samples, MAX_COLS)) {
         return 1;
@@ -22,8 +20,22 @@ int main() {
 
     printf("Amostras de treino: %d, Amostras de teste: %d\n", train_size, test_size);
 
-    // train_model(train, train_size, MAX_COLS);
-    // prediction = predict(test);
+    RandomForest *random_forest = train_model(train, train_size, MAX_COLS-1);
+
+    int *prediction = (int *)malloc(sizeof(test_size));
+    prediction = predict(random_forest, test, 114);
+    for (int b=0; b<114;b++){
+        printf("%d", train[b].label);
+    }
+    printf("\n");
+    printf("------------------- prediction ---------------\n");
+    for (int b=0; b<114;b++){
+        printf("%d", prediction[b]);
+    }
+    printf("\n");
+    
+    free(prediction);
+    free_random_forest(random_forest);
     // evaluate(prediction, test);
     return 0;
 }
