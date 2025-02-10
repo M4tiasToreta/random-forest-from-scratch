@@ -4,17 +4,17 @@
 #include <time.h>
 
 #define MAX_ROWS 1000
-#define MAX_COLS 30
+#define MAX_COLS 31
 #define TRAIN_SPLIT 0.8
 
 // Estrutura para armazenar os dados
 typedef struct {
-    float features[MAX_COLS];
+    float features[MAX_COLS-1];
     int label;
 } DataPoint;
 
 // Função para ler um CSV
-int read_csv(const char *filename, DataPoint data[], int *num_samples, int num_features) {
+int read_csv(const char *filename, DataPoint data[], int *num_samples, int num_columns) {
     FILE *file = fopen(filename, "r");
     if (!file) {
         perror("Erro ao abrir o arquivo");
@@ -25,16 +25,17 @@ int read_csv(const char *filename, DataPoint data[], int *num_samples, int num_f
     int row = 0;
     while (fgets(line, sizeof(line), file) && row < MAX_ROWS) {
         char *token = strtok(line, ",");
-        int col = 0;
+        int feat = 0;
 
-        while (token && col-1 < num_features) {
-            if (col != 0) {
-                data[row].features[col-1] = atof(token);
+        while (token && feat-1 < num_columns) {
+            if (feat != 0) {
+                data[row].features[feat-1] = atof(token);
             } else {
+                // not a feature, a label
                 data[row].label = atoi(token);
             }
             token = strtok(NULL, ",");
-            col++;
+            feat++;
         }
         row++;
     }
