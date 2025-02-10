@@ -9,7 +9,7 @@
 
 // Estrutura para armazenar os dados
 typedef struct {
-    float features[MAX_COLS - 1];
+    float features[MAX_COLS];
     int label;
 } DataPoint;
 
@@ -31,7 +31,6 @@ int read_csv(const char *filename, DataPoint data[], int *num_samples, int num_f
             if (col != 0) {
                 data[row].features[col] = atof(token);
             } else {
-                printf("%d", atoi(token));
                 data[row].label = atoi(token);
             }
             token = strtok(NULL, ",");
@@ -66,14 +65,14 @@ int main() {
     DataPoint train[MAX_ROWS], test[MAX_ROWS];
     int num_samples, train_size, test_size;
 
-    if (read_csv("data.csv", data, &num_samples, 31)) {
+    if (read_csv("data.csv", data, &num_samples, 32)) {
         return 1;
     }
 
     for (int a; a<MAX_COLS; a++){
-        printf("floats da primeira linha: %f\n", data[1].features[a]);
+        printf("floats da primeira linha: %f\n", data[22].features[a]);
     }
-    printf("label: %d\n", data[1].label);
+    printf("label: %d\n", data[22].label);
     printf("Total de amostras: %d\n", num_samples);
     
     split_data(data, num_samples, train, test, &train_size, &test_size);
