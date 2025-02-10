@@ -204,3 +204,16 @@ int* predict(RandomForest *random_forest, DataPoint samples[], int n_prediction_
     }
     return final_decisions;
 }
+
+int evaluate(int *prediction, DataPoint test_sample[], int test_size) {
+    int count_correct=0;
+    for (int i=0; i<test_size; i++) {
+        // printf("prediction %d sample %d\n", prediction[i], test_sample[i].label);
+        if (prediction[i]==test_sample[i].label) {
+            count_correct++;
+        }
+    }
+    printf("%d\n", count_correct);
+    printf("Accurancy: %f\n", (float)count_correct/test_size);
+    return 0;
+}

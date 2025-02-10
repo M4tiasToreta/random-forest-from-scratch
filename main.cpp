@@ -23,19 +23,19 @@ int main() {
     RandomForest *random_forest = train_model(train, train_size, MAX_COLS-1);
 
     int *prediction = (int *)malloc(sizeof(test_size));
-    prediction = predict(random_forest, test, 114);
-    for (int b=0; b<114;b++){
+    prediction = predict(random_forest, test, test_size);
+    for (int b=0; b<test_size;b++){
         printf("%d", train[b].label);
     }
     printf("\n");
     printf("------------------- prediction ---------------\n");
-    for (int b=0; b<114;b++){
+    for (int b=0; b<test_size;b++){
         printf("%d", prediction[b]);
     }
     printf("\n");
     
+    evaluate(prediction, test, test_size);
     free(prediction);
     free_random_forest(random_forest);
-    // evaluate(prediction, test);
     return 0;
 }
