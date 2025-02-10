@@ -4,7 +4,7 @@
 #include <time.h>
 
 #define MAX_ROWS 1000
-#define MAX_COLS 31
+#define MAX_COLS 32
 #define TRAIN_SPLIT 0.8
 
 // Estrutura para armazenar os dados
@@ -69,7 +69,7 @@ int main() {
         return 1;
     }
 
-    for (int a; a<MAX_COLS; a++){
+    for (int a=0; a<MAX_COLS-1; a++){
         printf("floats da primeira linha: %f\n", data[1].features[a]);
     }
     printf("label: %d\n", data[1].label);
