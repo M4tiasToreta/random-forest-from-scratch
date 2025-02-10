@@ -59,25 +59,3 @@ void split_data(DataPoint data[], int num_samples, DataPoint train[], DataPoint 
     *train_size = train_count;
     *test_size = test_count;
 }
-
-int main() {
-    DataPoint data[MAX_ROWS];
-    DataPoint train[MAX_ROWS], test[MAX_ROWS];
-    int num_samples, train_size, test_size;
-
-    if (read_csv("data.csv", data, &num_samples, 32)) {
-        return 1;
-    }
-
-    for (int a=0; a<MAX_COLS-1; a++){
-        printf("floats da primeira linha: %f\n", data[1].features[a]);
-    }
-    printf("label: %d\n", data[1].label);
-    printf("Total de amostras: %d\n", num_samples);
-    
-    split_data(data, num_samples, train, test, &train_size, &test_size);
-    
-    printf("Amostras de treino: %d, Amostras de teste: %d\n", train_size, test_size);
-    
-    return 0;
-}
