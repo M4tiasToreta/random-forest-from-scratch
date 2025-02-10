@@ -4,7 +4,7 @@
 #include <time.h>
 
 #define MAX_ROWS 1000
-#define MAX_COLS 32
+#define MAX_COLS 30
 #define TRAIN_SPLIT 0.8
 
 // Estrutura para armazenar os dados
@@ -27,9 +27,9 @@ int read_csv(const char *filename, DataPoint data[], int *num_samples, int num_f
         char *token = strtok(line, ",");
         int col = 0;
 
-        while (token && col < num_features) {
+        while (token && col-1 < num_features) {
             if (col != 0) {
-                data[row].features[col] = atof(token);
+                data[row].features[col-1] = atof(token);
             } else {
                 data[row].label = atoi(token);
             }

@@ -3,7 +3,7 @@
 #include <string.h>
 #include <time.h>
 #include "read_csv.h"
-#include "train.h"
+// #include "train.h"
 
 
 int main() {
@@ -12,7 +12,7 @@ int main() {
     int num_samples, train_size, test_size;
     int prediction[114];
 
-    if (read_csv("data.csv", data, &num_samples, 32)) {
+    if (read_csv("data.csv", data, &num_samples, 31)) {
         return 1;
     }
 
@@ -23,8 +23,8 @@ int main() {
 
     printf("Amostras de treino: %d, Amostras de teste: %d\n", train_size, test_size);
 
-    train_model(train);
-    prediction = predict(test);
-    evaluate(prediction, test);
+    // train_model(train, train_size, MAX_COLS);
+    // prediction = predict(test);
+    // evaluate(prediction, test);
     return 0;
 }
