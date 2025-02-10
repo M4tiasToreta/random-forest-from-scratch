@@ -4,30 +4,35 @@
 #include <time.h>
 #include "read_csv.h"
 
-typedef struct TreeNode {
-    int feature_index;         // feature to split on
-    double threshold;          // threshold value for the split
-    int prediction;            // if leaf node, prediction (0 or 1)
-    struct TreeNode *left;     // left subtree pointer
-    struct TreeNode *right;    // right subtree pointer
+typedef struct TreeNode
+{
+    int feature_index;      // feature to split on
+    double threshold;       // threshold value for the split
+    int prediction;         // if leaf node, prediction (0 or 1)
+    struct TreeNode *left;  // left subtree pointer
+    struct TreeNode *right; // right subtree pointer
     int is_leaf;
 } TreeNode;
 
-typedef struct {
+typedef struct
+{
     TreeNode **nodes;
     int n_trees;
 } RandomForest;
 
-int random_int(int low, int high) {
+int random_int(int low, int high)
+{
     return low + rand() % (high - low + 1);
 }
 
-double gini_index(DataPoint *samples, int n_samples) {
+double gini_index(DataPoint *samples, int n_samples)
+{
     if (n_samples == 0)
         return 0.0;
 
     int count0 = 0, count1 = 0;
-    for (int i = 0; i < n_samples; i++) {
+    for (int i = 0; i < n_samples; i++)
+    {
         if (samples[i].label == 0)
             count0++;
         else
@@ -39,15 +44,20 @@ double gini_index(DataPoint *samples, int n_samples) {
 }
 
 void split_dataset(DataPoint *samples, int n_samples, int feature, double threshold,
-                   DataPoint **left, int *n_left, DataPoint **right, int *n_right) {
+                   DataPoint **left, int *n_left, DataPoint **right, int *n_right)
+{
     DataPoint *left_samples = (DataPoint *)malloc(n_samples * sizeof(DataPoint));
     DataPoint *right_samples = (DataPoint *)malloc(n_samples * sizeof(DataPoint));
     int left_count = 0, right_count = 0;
 
-    for (int i = 0; i < n_samples; i++) {
-        if (samples[i].features[feature] < threshold) {
+    for (int i = 0; i < n_samples; i++)
+    {
+        if (samples[i].features[feature] < threshold)
+        {
             left_samples[left_count++] = samples[i];
-        } else {
+        }
+        else
+        {
             right_samples[right_count++] = samples[i];
         }
     }
@@ -59,7 +69,8 @@ void split_dataset(DataPoint *samples, int n_samples, int feature, double thresh
 }
 
 void find_best_split(DataPoint *samples, int n_samples, int n_features,
-                     int *best_feature, double *best_threshold, double *best_gini) {
+                     int *best_feature, double *best_threshold, double *best_gini)
+{
     *best_gini = 1.0;
     *best_feature = -1;
     *best_threshold = 0.0;
@@ -68,7 +79,8 @@ void find_best_split(DataPoint *samples, int n_samples, int n_features,
 
     double min_val = samples[0].features[feature];
     double max_val = samples[0].features[feature];
-    for (int i = 0; i < n_samples; i++) {
+    for (int i = 0; i < n_samples; i++)
+    {
         if (samples[i].features[feature] < min_val)
             min_val = samples[i].features[feature];
         if (samples[i].features[feature] > max_val)
@@ -76,7 +88,8 @@ void find_best_split(DataPoint *samples, int n_samples, int n_features,
     }
 
     int num_thresholds = 10; // ?? MAKE SURE THIS MAKES SENSE
-    for (int i = 0; i < num_thresholds; i++) {
+    for (int i = 0; i < num_thresholds; i++)
+    {
         double threshold = min_val + i * (max_val - min_val) / (num_thresholds - 1);
         DataPoint *left = NULL, *right = NULL;
         int n_left = 0, n_right = 0;
@@ -84,7 +97,8 @@ void find_best_split(DataPoint *samples, int n_samples, int n_features,
         double gini_left = gini_index(left, n_left);
         double gini_right = gini_index(right, n_right);
         double weighted_gini = (n_left * gini_left + n_right * gini_right) / n_samples;
-        if (weighted_gini < *best_gini) {
+        if (weighted_gini < *best_gini)
+        {
             *best_gini = weighted_gini;
             *best_feature = feature;
             *best_threshold = threshold;
@@ -94,7 +108,8 @@ void find_best_split(DataPoint *samples, int n_samples, int n_features,
     }
 }
 
-TreeNode* build_tree(DataPoint train[], int depth, int max_depth, int n_samples, int n_features, int min_registers_per_split){
+TreeNode *build_tree(DataPoint train[], int depth, int max_depth, int n_samples, int n_features, int min_registers_per_split)
+{
     TreeNode *node = (TreeNode *)malloc(sizeof(TreeNode));
     node->left = node->right = NULL;
     node->is_leaf = 0;
@@ -102,10 +117,15 @@ TreeNode* build_tree(DataPoint train[], int depth, int max_depth, int n_samples,
     double best_threshold;
     double best_gini;
 
-    if (depth >= max_depth || n_samples < min_registers_per_split || gini_index(train, n_samples) == 0.0) {
+    if (depth >= max_depth || n_samples < min_registers_per_split || gini_index(train, n_samples) == 0.0)
+    {
         int count0 = 0, count1 = 0;
-        for (int i = 0; i < n_samples; i++) {
-            if (train[i].label == 0) count0++; else count1++;
+        for (int i = 0; i < n_samples; i++)
+        {
+            if (train[i].label == 0)
+                count0++;
+            else
+                count1++;
         }
         node->is_leaf = 1;
         // Set prediction to the majority class.
@@ -114,9 +134,11 @@ TreeNode* build_tree(DataPoint train[], int depth, int max_depth, int n_samples,
     }
     find_best_split(train, n_samples, n_features, &best_feature, &best_threshold, &best_gini);
 
-    if (best_feature == -1) {
+    if (best_feature == -1)
+    {
         int count0 = 0, count1 = 0;
-        for (int i = 0; i < n_samples; i++) {
+        for (int i = 0; i < n_samples; i++)
+        {
             if (train[i].label == 0)
                 count0++;
             else
@@ -141,7 +163,8 @@ TreeNode* build_tree(DataPoint train[], int depth, int max_depth, int n_samples,
     return node;
 }
 
-void free_tree(TreeNode *node) {
+void free_tree(TreeNode *node)
+{
     if (node == NULL)
         return;
     free_tree(node->left);
@@ -149,23 +172,27 @@ void free_tree(TreeNode *node) {
     free(node);
 }
 
-void free_random_forest(RandomForest *forest) {
-    for (int i = 0; i < forest->n_trees; i++) {
+void free_random_forest(RandomForest *forest)
+{
+    for (int i = 0; i < forest->n_trees; i++)
+    {
         free_tree(forest->nodes[i]);
     }
     free(forest->nodes);
     free(forest);
 }
 
-
-RandomForest* train_model(DataPoint train[], int n_samples, int n_features, int min_registers_per_split=15, int max_depth=10, int n_trees=5) {
+RandomForest *train_model(DataPoint train[], int n_samples, int n_features, int min_registers_per_split = 15, int max_depth = 10, int n_trees = 5)
+{
     RandomForest *random_forest = (RandomForest *)malloc(sizeof(RandomForest));
     random_forest->n_trees = n_trees;
-    random_forest->nodes = (TreeNode * *)malloc(n_trees * sizeof(TreeNode*));
+    random_forest->nodes = (TreeNode **)malloc(n_trees * sizeof(TreeNode *));
 
-    for (int i = 0; i < n_trees; i++) {
+    for (int i = 0; i < n_trees; i++)
+    {
         DataPoint *bootstrap = (DataPoint *)malloc(n_samples * sizeof(DataPoint));
-        for (int j = 0; j < n_samples; j++) {
+        for (int j = 0; j < n_samples; j++)
+        {
             int index = random_int(0, n_samples - 1); // valores podem se repetir aqui. Talvez um tunning para não se repetirem?
             bootstrap[j] = train[index];
         }
@@ -175,7 +202,8 @@ RandomForest* train_model(DataPoint train[], int n_samples, int n_features, int 
     return random_forest;
 }
 
-int predict_tree(TreeNode *node, DataPoint sample) {
+int predict_tree(TreeNode *node, DataPoint sample)
+{
     if (node->is_leaf)
         return node->prediction;
     if (sample.features[node->feature_index] < node->threshold)
@@ -184,19 +212,24 @@ int predict_tree(TreeNode *node, DataPoint sample) {
         return predict_tree(node->right, sample);
 }
 
-int make_final_decision(int* trees_decisions, int num_nodes){
-    int sum=0;
-    for (int i=0; i<num_nodes; i++){
+int make_final_decision(int *trees_decisions, int num_nodes)
+{
+    int sum = 0;
+    for (int i = 0; i < num_nodes; i++)
+    {
         sum += trees_decisions[i];
     }
     return (sum * 2 >= num_nodes) ? 1 : 0;
 }
 
-int* predict(RandomForest *random_forest, DataPoint samples[], int n_prediction_sample) {
-    int* final_decisions = (int*)malloc(n_prediction_sample * sizeof(int));
+int *predict(RandomForest *random_forest, DataPoint samples[], int n_prediction_sample)
+{
+    int *final_decisions = (int *)malloc(n_prediction_sample * sizeof(int));
     int trees_decisions[random_forest->n_trees];
-    for (int j = 0; j<n_prediction_sample; j++) {
-        for (int i = 0; i < random_forest->n_trees; i++) {
+    for (int j = 0; j < n_prediction_sample; j++)
+    {
+        for (int i = 0; i < random_forest->n_trees; i++)
+        {
             int pred = predict_tree(random_forest->nodes[i], samples[j]);
             trees_decisions[i] = pred;
         }
@@ -205,15 +238,65 @@ int* predict(RandomForest *random_forest, DataPoint samples[], int n_prediction_
     return final_decisions;
 }
 
-int evaluate(int *prediction, DataPoint test_sample[], int test_size) {
-    int count_correct=0;
-    for (int i=0; i<test_size; i++) {
+float calculate_prediction_err(int tp, int fp, int tn, int fn)
+{
+    return (float)(fp + fn) / (tp + tn + fp + fn);
+}
+
+float calculate_accuracy(int tp, int fp, int tn, int fn)
+{
+    return (float)(tp + tn) / (tp + tn + fp + fn);
+}
+
+float calculate_precision(int tp, int fp)
+{
+    return (float)tp / (tp + fp);
+}
+
+float calculate_recall(int tp, int fp, int tn, int fn)
+{
+    return (float)tp / (tp + fn);
+}
+
+float calculate_f1_score(float prec, float rec)
+{
+    return (2 * prec * rec) / (prec + rec);
+}
+
+int evaluate(int *prediction, DataPoint test_sample[], int test_size)
+{
+    int tp = 0, fp = 0, tn = 0, fn = 0;
+
+    for (int i = 0; i < test_size; i++)
+    {
         // printf("prediction %d sample %d\n", prediction[i], test_sample[i].label);
-        if (prediction[i]==test_sample[i].label) {
-            count_correct++;
+        if (prediction[i] == test_sample[i].label && prediction[i] == 1)
+        {
+            tp++;
+        }
+        else if (prediction[i] == test_sample[i].label && prediction[i] == 0)
+        {
+            tn++;
+        }
+        else if (prediction[i] == 1)
+        {
+            fp++;
+        }
+        else
+        {
+            fn++;
         }
     }
-    printf("%d\n", count_correct);
-    printf("Accurancy: %f\n", (float)count_correct/test_size);
+
+    printf("tp: %d fp: %d tn: %d fn: %d\n", tp, fp, tn, fn);
+    float pred_err = calculate_prediction_err(tp, fp, tn, fn);
+    float acc = calculate_accuracy(tp, fp, tn, fn);
+    float prec = calculate_precision(tp, fp);
+    float rec = calculate_recall(tp, fp, tn, fn);
+    float f1_score = calculate_f1_score(prec, rec);
+
+    printf("prediction err: %f accuracy: %f precision: %f recall: %f f1_score: %f", pred_err, acc, prec, rec, f1_score);
+
+    // printf("Accurancy: %f\n", (float)count_correct/test_size);
     return 0;
 }
