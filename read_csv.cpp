@@ -4,7 +4,7 @@
 #include <time.h>
 
 #define MAX_ROWS 1000
-#define MAX_COLS 31
+#define MAX_COLS 32
 #define TRAIN_SPLIT 0.8
 
 // Estrutura para armazenar os dados
@@ -21,7 +21,7 @@ int read_csv(const char *filename, DataPoint data[], int *num_samples, int num_f
         return 1;
     }
     
-    char line[1024];
+    char line[2048];
     int row = 0;
     while (fgets(line, sizeof(line), file) && row < MAX_ROWS) {
         char *token = strtok(line, ",");
@@ -31,7 +31,6 @@ int read_csv(const char *filename, DataPoint data[], int *num_samples, int num_f
             if (col != 0) {
                 data[row].features[col] = atof(token);
             } else {
-                printf("%d", atoi(token));
                 data[row].label = atoi(token);
             }
             token = strtok(NULL, ",");
@@ -70,7 +69,7 @@ int main() {
         return 1;
     }
 
-    for (int a; a<MAX_COLS; a++){
+    for (int a=0; a<MAX_COLS-1; a++){
         printf("floats da primeira linha: %f\n", data[1].features[a]);
     }
     printf("label: %d\n", data[1].label);
