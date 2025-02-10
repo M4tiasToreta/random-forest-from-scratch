@@ -21,7 +21,7 @@ int read_csv(const char *filename, DataPoint data[], int *num_samples, int num_f
         return 1;
     }
     
-    char line[1024];
+    char line[2048];
     int row = 0;
     while (fgets(line, sizeof(line), file) && row < MAX_ROWS) {
         char *token = strtok(line, ",");
@@ -70,9 +70,9 @@ int main() {
     }
 
     for (int a; a<MAX_COLS; a++){
-        printf("floats da primeira linha: %f\n", data[22].features[a]);
+        printf("floats da primeira linha: %f\n", data[1].features[a]);
     }
-    printf("label: %d\n", data[22].label);
+    printf("label: %d\n", data[1].label);
     printf("Total de amostras: %d\n", num_samples);
     
     split_data(data, num_samples, train, test, &train_size, &test_size);
