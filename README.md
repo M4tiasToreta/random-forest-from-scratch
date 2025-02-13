@@ -4,9 +4,9 @@ Freakin machine learning Random Forest Binary Classification model done from scr
 <br /><br />
 - How to run it?<br />
 Install gcc and run<br />
-```gcc main.cpp -o main.exe -lm```<br />
+```gcc main.cpp -o main.exe -lm``` <br />
 then<br />
-```./main.exe```<br />
+```./main.exe``` <br />
 <br />
 The accurancy is really good, only binary classification.<br />
 <br />
